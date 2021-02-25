@@ -6,10 +6,10 @@ languages:
 products:
 - azure
 - azure-netapp-files
-description: "This project demonstrates how to create and update a Snapshot Policy for Microsoft.NetApp resource provider using Azure CLI NetApp File module.
+description: This project demonstrates how to create and update a Snapshot Policy for Microsoft.NetApp resource provider using Azure NetApp Files CLI module.
 ---
 
-# Azure NetAppFiles script Sample - Snapshot Policy for Azure CLI 
+# Azure NetApp Files script Sample - Snapshot Policy for Azure CLI 
 
 This project demonstrates how to use a PowerShell sample script to create and update a Snapshot Policy for the Microsoft.NetApp
 resource provider.
@@ -17,7 +17,7 @@ resource provider.
 In this sample script we perform the following operations:
 
 * Creations
-    * NetApp Files Account
+    * Azure NetApp Files Account
     * Snapshot Policy
     * Capacity Pool
     * Volume
@@ -25,7 +25,7 @@ In this sample script we perform the following operations:
     * Snapshot Policy
 * Deletions
     * Volume
-	* Capacity Pool
+    * Capacity Pool
     * Snapshot Policy    
     * Account
 
