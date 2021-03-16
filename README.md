@@ -81,7 +81,7 @@ The following table describes all files within this solution:
 	 * Open create-anf-snapshot-policy.sh and edit all the parameters
 	 * Save and close
 	 * Run the following command
-	 ``` Terminal
+	 ``` Bash
 	 ./create-anf-snapshot-policy.sh
 	 ```
 

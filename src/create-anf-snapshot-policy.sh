@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Mandatory variables for ANF resources
 # Change variables according to your environment 
-SUBSCRIPTION_ID="Subscription ID Here"
-LOCATION="CentralUS"
+SUBSCRIPTION_ID="<Subscription ID>"
+LOCATION="WestUS"
 RESOURCEGROUP_NAME="My-rg"
 VNET_NAME="testvnet"
 SUBNET_NAME="testsubnet"
@@ -159,8 +159,8 @@ get_resource_type()
     local _RESOURCE_ID=$1
     local __resultvar=$2    
     
-    _SPACED_RESOURCE_ID=$_RESOURCE_ID;_SPACED_RESOURCE_ID="${_RESOURCE_ID//\// }"   
-    OIFS=$IFS; IFS=' '; read -ra ANF_RESOURCES_ARRAY <<< $_SPACED_RESOURCE_ID; IFS=$OIFS
+    _RESOURCE_ID="${_RESOURCE_ID//\// }"   
+    OIFS=$IFS; IFS=' '; read -ra ANF_RESOURCES_ARRAY <<< $_RESOURCE_ID; IFS=$OIFS
     
     if [[ "$__resultvar" ]]; then
         eval $__resultvar="'${ANF_RESOURCES_ARRAY[-2]}'"
@@ -178,28 +178,28 @@ wait_for_resource()
 {
     local _RESOURCE_ID=$1
 
-    _RESOURCE_TYPE="";get_resource_type $_RESOURCE_ID _RESOURCE_TYPE
+    local _RESOURCE_TYPE="";get_resource_type $_RESOURCE_ID _RESOURCE_TYPE
 
-    for number in {1..60}; do
+    for i in {1..60}; do
         sleep 10
         if [[ "${_RESOURCE_TYPE,,}" == "netappaccounts" ]]; then
-            _account_status=$(az netappfiles account show --ids $_RESOURCE_ID | jq -r ".provisioningState")
-            if [[ "${_account_status,,}" == "succeeded" ]]; then
+            _ACCOUNT_STATUS=$(az netappfiles account show --ids $_RESOURCE_ID | jq -r ".provisioningState")
+            if [[ "${_ACCOUNT_STATUS,,}" == "succeeded" ]]; then
                 break
             fi        
         elif [[ "${_RESOURCE_TYPE,,}" == "capacitypools" ]]; then
-            _pool_status=$(az netappfiles pool show --ids $_RESOURCE_ID | jq -r ".provisioningState")
-            if [[ "${_pool_status,,}" == "succeeded" ]]; then
+            _POOL_STATUS=$(az netappfiles pool show --ids $_RESOURCE_ID | jq -r ".provisioningState")
+            if [[ "${_POOL_STATUS,,}" == "succeeded" ]]; then
                 break
             fi                    
         elif [[ "${_RESOURCE_TYPE,,}" == "volumes" ]]; then
-            _volume_status=$(az netappfiles volume show --ids $_RESOURCE_ID | jq -r ".provisioningState")
-            if [[ "${_volume_status,,}" == "succeeded" ]]; then
+            _VOLUME_STATUS=$(az netappfiles volume show --ids $_RESOURCE_ID | jq -r ".provisioningState")
+            if [[ "${_VOLUME_STATUS,,}" == "succeeded" ]]; then
                 break
             fi
         else
-            _snapshot_status=$(az netappfiles snapshot show --ids $_RESOURCE_ID | jq -r ".provisioningState")
-            if [[ "${_snapshot_status,,}" == "succeeded" ]]; then
+            _SNAPSHOT_STATUS=$(az netappfiles snapshot show --ids $_RESOURCE_ID | jq -r ".provisioningState")
+            if [[ "${_SNAPSHOT_STATUS,,}" == "succeeded" ]]; then
                 break
             fi           
         fi        
@@ -211,34 +211,18 @@ wait_for_no_resource()
 {
     local _RESOURCE_ID=$1
 
-    _RESOURCE_TYPE="";get_resource_type $_RESOURCE_ID _RESOURCE_TYPE
+    local _RESOURCE_TYPE="";get_resource_type $_RESOURCE_ID _RESOURCE_TYPE
  
-    for number in {1..60}; do
+    for i in {1..60}; do
         sleep 10
         if [[ "${_RESOURCE_TYPE,,}" == "netappaccounts" ]]; then
-            {
-                az netappfiles account show --ids $_RESOURCE_ID
-            } || {
-                break
-            }                    
+            az netappfiles account show --ids $_RESOURCE_ID || break
         elif [[ "${_RESOURCE_TYPE,,}" == "capacitypools" ]]; then
-            {
-                az netappfiles pool show --ids $_RESOURCE_ID
-            } || {
-                break
-            }                   
+            az netappfiles pool show --ids $_RESOURCE_ID || break 
         elif [[ "${_RESOURCE_TYPE,,}" == "volumes" ]]; then
-            {
-                az netappfiles volume show --ids $_RESOURCE_ID
-            } || {
-                break
-            }
+            az netappfiles volume show --ids $_RESOURCE_ID || break
         else
-            {
-                az netappfiles snapshot show --ids $_RESOURCE_ID
-            } || {
-                break
-            }         
+            az netappfiles snapshot show --ids $_RESOURCE_ID || break
         fi        
     done   
 }
@@ -341,7 +325,7 @@ display_message "Updating Snapshot Policy ..."
 
 # Clean up resources
 if [[ "$SHOULD_CLEANUP" == true ]]; then
-    #Display cleanup header
+    # Display cleanup header
     display_cleanup_header
 
     # Delete Volume
